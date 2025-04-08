@@ -1,9 +1,9 @@
 import { StyleSheet } from "react-native";
 import { Card, Text } from "react-native-paper";
 
-export default function CursoCard({nome, modalidade, turno}) {
+export default function CursoCard({nome, modalidade, turno, onPress}) {
     return(
-        <Card style={styles.card} mode="outlined">
+        <Card style={styles.card} mode="outlined" onPress={onPress}>
             <Card.Content>
                 <Text variant="titleMedium">
                     {nome}
