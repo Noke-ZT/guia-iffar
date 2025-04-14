@@ -7,7 +7,8 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const cursos_db = [
     {   nome: "Sistemas para Internet", 
-        modalidade: "Presencial", nivel: "Superior", 
+        modalidade: "Presencial", 
+        nivel: "Superior", 
         unidade: "IFFar - Panambi", 
         duracao: "3 anos", 
         turno: "Noturno", 

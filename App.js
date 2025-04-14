@@ -11,7 +11,7 @@ import { tema } from './src/screens/config/tema';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DetalheCurso from './src/screens/DetalheCurso';
-
+import DetalheEvento from './src/screens/DetalheEvento';
 
 
 //const Stack = createNativeStackNavigator();
@@ -58,7 +58,15 @@ export default function App() {
           <Tab.Screen name="DetalheCurso" component={DetalheCurso}
             options={{
               tabBarButton: () => null,
-              tabBarStyle: { display: 'none' }
+              tabBarStyle: { display: 'none' },
+              tabBarItemStyle: { display: 'none', width: 0, height: 0 },
+            }}
+          />
+          <Tab.Screen name="DetalheEvento" component={DetalheEvento}
+            options={{
+              tabBarButton: () => null,
+              tabBarStyle: { display: 'none' },
+              tabBarItemStyle: { display: 'none', width: 0, height: 0 },
             }}
           />
 

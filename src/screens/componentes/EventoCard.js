@@ -1,13 +1,13 @@
 import { StyleSheet, View } from "react-native";
 import { Badge, Card, Text, useTheme } from "react-native-paper";
 
-export default function EventoCard({titulo, data, local, inscricao}) {
+export default function EventoCard({titulo, data, local, inscricao, onPress}) {
     const theme = useTheme();
     
     const corBadge = inscricao === "aberta" ? theme.colors.primary : "tomato";
     const textoBadge = inscricao === "aberta" ? "Incrições abertas" : "Encerradas";
     return(
-        <Card style={styles.card} mode="outlined">
+        <Card style={styles.card} mode="outlined" onPress={onPress}>
             <Card.Content>
                 <View style={styles.header}>
                     <Text variant="titleMedium">
