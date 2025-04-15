@@ -7,6 +7,9 @@ export default function Home({navigation}) {
         <LinearGradient colors={['#DFF5EB', '#FFFFFF']} style={{flex: 1}}>
 
             <View style={styles.container}>
+                <Text style={styles.titulo}>
+                    Olá Usuário!
+                </Text>
                 <Image style={styles.imagem} source={require('../../assets/IFFar.png')}/>
                 <Text style={styles.titulo}>
                     Guia Acadêmico IFFar Panambi
@@ -18,6 +21,14 @@ export default function Home({navigation}) {
                 <Button style={styles.botao} mode="contained"
                     onPress={() => navigation.navigate('Eventos')}>
                     Ver Eventos
+                </Button>
+                <Button style={styles.botao} mode="contained"
+                    onPress={() => navigation.navigate('Login')}>
+                    Login
+                </Button>
+                <Button style={styles.botao} mode="contained"
+                    onPress={() => navigation.navigate('Cadastro')}>
+                    Cadastro
                 </Button>
                 <Button style={styles.botao} mode="outlined"
                     onPress={() => navigation.navigate('Sobre')}>
@@ -49,7 +60,7 @@ const styles = StyleSheet.create({
     imagem:{
         width: 180,
         height: 200,
-        marginBottom: 30,
+        marginBottom: 25,
         alignSelf: 'center',
         resizeMode: 'contain',
         backgroundColor: '#F4F4F4',

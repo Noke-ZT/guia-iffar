@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet } from "react-native";
 import { Badge, Button, Card, Divider, Text, useTheme} from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
+import { format } from "date-fns";
 
 export default function DetalheEvento({route}) {
     const {
@@ -20,14 +21,14 @@ export default function DetalheEvento({route}) {
             <ScrollView style={styles.container}>
                 <Card mode="outlined" style={styles.card}>
                     <Card.Content>
-                        <Text variant="titleLarge">
+                        <Text style={{color:corBadge}} variant="titleLarge">
                             {titulo}
                         </Text>
                         <Badge style={[styles.badge, {backgroundColor:corBadge}]}>{textoBadge}</Badge>
 
                         <Divider style={styles.divisor}/>
 
-                        <Text variant="bodyMedium"> 🗓️Data: {data} </Text>
+                        <Text variant="bodyMedium"> 🗓️Data: {format(data, "dd/MM/yyyy")} </Text>
                         <Text variant="bodyMedium"> 📍Local: {local} </Text>
                         
 

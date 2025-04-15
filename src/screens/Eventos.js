@@ -1,29 +1,34 @@
 import { SafeAreaView, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { ActivityIndicator, Button, Text } from "react-native-paper";
 import EventoCard from "./componentes/EventoCard";
 import { ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
+import { supabase } from "./config/supabase";
+import { useEffect, useState } from "react";
 
-const eventos_db = [
-    {
-        titulo: "Semana Acadêmica - Sistemas para Internet", 
-        data: "2025/12/12", 
-        local: "Auditório",
-        inscricao: "aberta",
-        descricao: "A Semana Acadêmica é um evento que visa promover a troca de conhecimentos e experiências entre alunos, professores e profissionais da área de Sistemas para Internet. O evento contará com palestras, workshops e mesas redondas sobre temas relevantes para a formação dos alunos.",
-    },
-    {
-        titulo: "Mostra Cultural", 
-        data: "2025/03/26", 
-        local: "Sala B-15", 
-        inscricao: "fechada",
-        descricao: "A Mostra Cultural é um evento que tem como objetivo apresentar as produções culturais dos alunos do IFFar. O evento contará com apresentações artísticas, exposições e oficinas.",
-    },
-]
+
 
 export default function Eventos({navigation}) {
+    const [eventos, setEventos] = useState([]);
+    const [carregando, setCarregando] = useState(true);
+
+    useEffect(() =>{
+        async function buscarEventos(){
+            const {data, error} = await supabase.from('eventos').select('*');
+            if(error){
+                console.log(error);
+            }
+            else{
+                setEventos(data);
+            }
+            setCarregando(false);
+        }
+        buscarEventos();
+    }, [])
+
     return (
+        
         <LinearGradient colors={['#DFF5EB', '#FFFFFF']} style={{flex: 1}}>
             <SafeAreaView style={{flex: 1}}>
                 <ScrollView style={{flex: 1}} contentContainerStyle={styles.container}>
@@ -31,7 +36,10 @@ export default function Eventos({navigation}) {
                         Eventos Acadêmicos
                     </Text>
                     
-                    {eventos_db.map((evento, index) => (
+                    {carregando && <ActivityIndicator animating/>}
+                    {!carregando && eventos.length == 0 && <Text> Não Tem Registro</Text>}
+
+                    {eventos.map((evento, index) => (
                         <EventoCard key={index} {...evento} 
                             onPress={()=>navigation.navigate('DetalheEvento', evento)}/>
                     ))

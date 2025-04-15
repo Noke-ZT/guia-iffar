@@ -1,22 +1,34 @@
 import { SafeAreaView, ScrollView, StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { ActivityIndicator, Button, Text } from "react-native-paper";
 import CursoCard from "./componentes/CursoCard";
 import { LinearGradient } from "expo-linear-gradient";
 
+import { supabase } from "./config/supabase";
+import { useEffect, useState } from "react";
 
 
-const cursos_db = [
-    {   nome: "Sistemas para Internet", 
-        modalidade: "Presencial", 
-        nivel: "Superior", 
-        unidade: "IFFar - Panambi", 
-        duracao: "3 anos", 
-        turno: "Noturno", 
-        descricao: "Contribuir para o desenvolvimento regional, formando profissionais qualificados para o mercado digital e para o mundo do trabalho, com conhecimentos técnicos, aptos a oferecer serviços no âmbito interno das organizações"},
-    
-]
+
+
 
 export default function Cursos({navigation}) {
+              //hook do react  
+    const [cursos, setCursos] = useState([]);
+    const [carregando, setCarregando] = useState(true);
+
+    useEffect(() =>{
+        async function buscarCursos(){
+            const {data, error} = await supabase.from('cursos').select('*');
+            if(error){
+                console.log(error);
+            }
+            else{
+                setCursos(data);
+            }
+            setCarregando(false);
+        }
+        buscarCursos();
+    }, [])
+
     return (
         <LinearGradient colors={['#DFF5EB', '#FFFFFF']} style={{flex: 1}}>
             <SafeAreaView style={{flex: 1}}>
@@ -24,8 +36,11 @@ export default function Cursos({navigation}) {
                     <Text style={styles.titulo}>
                         Cursos do IFFar
                     </Text>
-                    
-                    {cursos_db.map((curso, index) => (
+
+                    {carregando && <ActivityIndicator animating/>}
+                    {!carregando && cursos.length == 0 && <Text> Não Tem Registro</Text>}
+
+                    {cursos.map((curso, index) => (
                         <CursoCard key={index} {...curso} 
                             onPress={()=>navigation.navigate('DetalheCurso', curso)}/>
                     ))

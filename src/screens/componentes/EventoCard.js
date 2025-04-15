@@ -1,5 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { Badge, Card, Text, useTheme } from "react-native-paper";
+import { format } from 'date-fns';
 
 export default function EventoCard({titulo, data, local, inscricao, onPress}) {
     const theme = useTheme();
@@ -10,14 +11,14 @@ export default function EventoCard({titulo, data, local, inscricao, onPress}) {
         <Card style={styles.card} mode="outlined" onPress={onPress}>
             <Card.Content>
                 <View style={styles.header}>
-                    <Text variant="titleMedium">
+                    <Text style={{color:corBadge}} variant="titleMedium">
                         {titulo}
                     </Text>
                 <Badge style={[styles.badge, {backgroundColor:corBadge}]}>{textoBadge}</Badge>
                 </View>
                 
                 <Text variant="bodyMedium">
-                    Data: {data}
+                    Data: {format(data, "dd/MM/yyyy")}
                 </Text>
                 <Text variant="bodyMedium">
                     Local: {local}
@@ -41,6 +42,7 @@ const styles = StyleSheet.create({
         color: 'white',
         paddingHorizontal: 10,
         fontSize: 12,
+        resizeMode: 'contain',
     },
     
 });

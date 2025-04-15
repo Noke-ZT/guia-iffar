@@ -12,6 +12,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DetalheCurso from './src/screens/DetalheCurso';
 import DetalheEvento from './src/screens/DetalheEvento';
+import Login from './src/screens/Login';
+import Cadastro from './src/screens/Cadastro';
 
 
 //const Stack = createNativeStackNavigator();
@@ -65,7 +67,21 @@ export default function App() {
           <Tab.Screen name="DetalheEvento" component={DetalheEvento}
             options={{
               tabBarButton: () => null,
-              tabBarStyle: { display: 'none' },
+              tabBarStyle: { display: 'none', },
+              tabBarItemStyle: { display: 'none', width: 0, height: 0 },
+            }}
+          />
+          <Tab.Screen name="Login" component={Login}
+            options={{
+              tabBarButton: () => null,
+              tabBarStyle: { display: 'none', },
+              tabBarItemStyle: { display: 'none', width: 0, height: 0 },
+            }}
+          />
+          <Tab.Screen name="Cadastro" component={Cadastro}
+            options={{
+              tabBarButton: () => null,
+              tabBarStyle: { display: 'none', },
               tabBarItemStyle: { display: 'none', width: 0, height: 0 },
             }}
           />
