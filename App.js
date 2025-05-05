@@ -33,7 +33,9 @@ export default function App() {
             options={{
               tabBarIcon: ({color, size}) => (
                 <MaterialCommunityIcons name="home" size={size} color={color}/>
-              )
+              ),
+              tabBarStyle: { display: 'none', },
+              tabBarItemStyle: { display: 'none', width: 0, height: 0 },
             }}
           />
           <Tab.Screen name="Cursos" component={Cursos}

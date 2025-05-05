@@ -4,19 +4,54 @@ import { Image, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
+import { supabase } from "./config/supabase";
+
+
 export default function Cadastro() {
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [carregando, setCarregando] = useState(false);
 
-  const navigation = useNavigation();
+    const navigation = useNavigation();
+  
+    const cadastrar = async () =>{
+        if(!nome || !email || !senha){
+            alert('Preencha todos os campos!');
+            return;
+        }
+        setCarregando(true);
 
-  const cadastrar = () =>{
-    console.log(nome, email, senha);
+        const { data, error } = await supabase.auth.signUp({
+            email: email,
+            password: senha,
+          });
+      
+            if (error) {
+                console.error('Erro ao cadastrar:', error);
+                alert('Erro ao cadastrar:', error.message);
+                setCarregando(false);
+                return;
+            }
+          
+        const id = data.user?.id;
 
-    setCarregando(false);
-  }
+        if (id) {
+            const {error: erroUsuario} = await supabase.from('usuarios').insert([
+                {id, nome, tipo: 'aluno'}
+            ]);
+            if(erroUsuario){
+                console.error('Erro ao cadastrar usuário:', erroUsuario);
+                alert('Erro ao cadastrar usuário:', erroUsuario.message);
+            }
+            else{
+                alert('Usuário cadastrado com sucesso!');
+                navigation.navigate('Login');
+            }
+        }
+            setCarregando(false);
+            };
+    
     return (
         <LinearGradient colors={['#DFF5EB', '#FFFFFF']} style={{flex: 1}}>
 

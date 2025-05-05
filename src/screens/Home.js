@@ -7,8 +7,8 @@ export default function Home({navigation}) {
         <LinearGradient colors={['#DFF5EB', '#FFFFFF']} style={{flex: 1}}>
 
             <View style={styles.container}>
-                <Text style={styles.titulo}>
-                    Olá Usuário!
+                <Text style={styles.titulo} >
+                    Olá
                 </Text>
                 <Image style={styles.imagem} source={require('../../assets/IFFar.png')}/>
                 <Text style={styles.titulo}>
@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
     },
     titulo:{
         fontSize: 24,
-        marginBottom: 30,
-        textAlign: 'center',
+        marginBottom: 0,
+        textAlign: 'center', 
     },
     botao:{
         marginVertical: 10,
@@ -67,5 +67,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         borderColor: '#E0E0E0',
+        marginTop: 15,
     },
 })
