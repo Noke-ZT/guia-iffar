@@ -35,6 +35,9 @@ export default function Eventos({navigation}) {
                     <Text style={styles.titulo}>
                         Eventos Acadêmicos
                     </Text>
+                    <Button style={styles.botao} mode="contained" onPress={() => navigation.navigate('CadastroEvento')}>
+                        Cadastrar Evento
+                    </Button>
                     
                     {carregando && <ActivityIndicator animating/>}
                     {!carregando && eventos.length == 0 && <Text> Não Tem Registro</Text>}

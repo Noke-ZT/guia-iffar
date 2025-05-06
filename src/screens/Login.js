@@ -1,53 +1,54 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, StyleSheet, View } from "react-native";
+import { Alert, Image, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 
 import { supabase } from "./config/supabase";
+import { useUsuario } from "./contexto/UsuarioContexto";
 
 export default function Login() {
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [carregando, setCarregando] = useState(false);
 
+    const { setUsuario, setPerfil } = useUsuario();
+
     const navigation = useNavigation();
 
-    const entrar = async () =>{
-            if(!email || !senha){
-                alert('Preencha todos os campos!');
-                return;
-            }
-            setCarregando(true);
-    
+
+    const fazerLogin = async () =>{
+        setCarregando(true);
+            //tabela Users do supabase
             const { data, error } = await supabase.auth.signInWithPassword({
                 email: email,
                 password: senha,
-              });
+            })
+
             if (error) {
-                console.error('Erro ao conectar:', error);
-                alert('Erro ao conectar:', error.message);
+                Alert.alert('Erro ao conectar:');
+                alert('Erro ao conectar:' + error.message);
                 setCarregando(false);
                 return;
             }
 
-            const idUser = data.user?.id;
+            const user = data.user;
 
-            if (idUser) {
-                const {error: erroUsuario} = await supabase.from('usuarios').from('usuarios').select().eq('id', idUser).single();
-                if(erroUsuario){
-                    console.error('Erro ao cadastrar usuário:', erroUsuario);
-                    alert('Erro ao cadastrar usuário:', erroUsuario.message);
+            if (user) {
+                //buscar na nossa tabela
+                const { data: perfilUsuario, error: erroPerfil } = await supabase.from('usuarios').select('*').eq('id', user.id).single();
+                if(erroPerfil){
+                    console.error('Erro de usuário:');
+                    Alert.alert('Erro de usuário:');
+                    alert('Erro de usuário:' + erroPerfil.message);
+                    setCarregando(false);
+                    return;
                 }
-                else{
-                    alert('Usuário cadastrado com sucesso!');
-                    navigation.navigate('Login');
-                }
+            setUsuario(user);
+            setPerfil(perfilUsuario);
+            navigation.navigate('Home'); 
             }
-                setCarregando(false);
-            alert('Login realizado com sucesso!');
-            setCarregando(false);
-            navigation.navigate('Home');
+            
     };
     return (
         <LinearGradient colors={['#DFF5EB', '#FFFFFF']} style={{flex: 1}}>
@@ -58,7 +59,7 @@ export default function Login() {
                 <TextInput label="E-mail" value={email} style={styles.input} onChangeText={setEmail} keyboardType="email-address"/>
                 <TextInput label="Senha" value={senha} style={styles.input} onChangeText={setSenha} secureTextEntry/>
                 <Button style={styles.botao} mode="contained"
-                    onPress={entrar}>
+                    onPress={fazerLogin}>
                     Entrar
                 </Button>
                 <Text style={styles.link} onPress={() => navigation.navigate('Cadastro')}> Ainda não teenho conta </Text>
