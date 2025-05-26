@@ -1,10 +1,10 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation} from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Alert, StyleSheet } from "react-native";
 import { ScrollView } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput, RadioButton } from "react-native-paper";
 import { useUsuario } from "./contexto/UsuarioContexto";
-import { useState } from "react";
+import { useState} from "react";
 import { supabase } from "./config/supabase";
 
 export default function CadastroEvento() {
@@ -13,6 +13,8 @@ export default function CadastroEvento() {
     const [local, setLocal] = useState('');
     const [inscricao, setInscricao] = useState('');
     const [descricao, setDescricao] = useState('');
+    const [total_vagas, setTotalVagas] = useState('');
+    const [vagas_disponiveis, setVagasDisponiveis] = useState('');
     const [carregando, setCarregando] = useState(false);
 
     const { perfil } = useUsuario();
@@ -20,12 +22,13 @@ export default function CadastroEvento() {
     const navigation = useNavigation();
 
     const cadastrar = async () => {
-        if (!titulo || !data || !local || !inscricao || !descricao) {
+        if (!titulo || !data || !local || !inscricao || !descricao || !total_vagas) {
             Alert.alert('Preencha todos os campos!');
+            alert('Preencha todos os campos!');
             return;
         }
 
-        if (perfil?.tipo !== 'professor') {
+        if (perfil?.tipo !== 'aluno') {
             Alert.alert('Permissão negada', 'Apenas professores podem cadastrar eventos!');
             alert('Apenas professores podem cadastrar eventos!');
             return;
@@ -35,11 +38,25 @@ export default function CadastroEvento() {
         const dataRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
         if (!dataRegex.test(data)) {
             Alert.alert('Erro', 'Formato de data inválido. Use DD/MM/YYYY');
+            alert('Formato de data inválido. Use DD/MM/YYYY');
             return;
         }
 
         const [day, month, year] = data.split('/');
         const dataFormatada = `${year}-${month}-${day}`;
+
+        // Valida total de vagas
+        if (isNaN(total_vagas) || total_vagas < 10) {
+            Alert.alert('Erro', 'O total de vagas deve ser um número maior ou igual a 10');
+            alert('O total de vagas deve ser um número maior ou igual a 10');
+            return;
+        }
+        // Valida inscrição
+        if (inscricao !== 'aberta' && inscricao !== 'encerrada') {
+            Alert.alert('Erro', 'Status de inscrição inválido. Use "aberta" ou "encerrada"');
+            alert('Status de inscrição inválido. Use "aberta" ou "encerrada"');
+            return;
+        }
 
         setCarregando(true);
 
@@ -51,25 +68,30 @@ export default function CadastroEvento() {
                     local,
                     inscricao,
                     descricao,
+                    total_vagas,
+                    total_vagas: parseInt(total_vagas, 10),
+                    vagas_disponiveis: parseInt(vagas_disponiveis, 10),
                 }
             ]);
             
             if (error) {
                 console.error('Erro ao cadastrar:', error);
                 Alert.alert('Erro', `Falha ao cadastrar evento: ${error.message}`);
+                alert(`Falha ao cadastrar evento: ${error.message}`);
                 setCarregando(false);
                 return;
             }
+        
+                
+            navigation.navigate('Eventos');
+            Alert.alert('Sucesso', 'Evento cadastrado com sucesso!');
+            alert('Evento cadastrado com sucesso!');
+
             
-            Alert.alert('Sucesso', 'Evento cadastrado com sucesso!', [
-                { 
-                    text: 'OK', 
-                    onPress: () => navigation.navigate('Eventos')
-                }
-            ]);
         } catch (err) {
             console.error('Erro na operação:', err);
             Alert.alert('Erro', 'Ocorreu um erro ao processar sua solicitação');
+            alert('Ocorreu um erro ao processar sua solicitação');
         } finally {
             setCarregando(false);
         }
@@ -88,10 +110,25 @@ export default function CadastroEvento() {
                     style={styles.input} 
                     onChangeText={setTitulo} 
                 />
-                <TextInput label="Data (DD/MM/YYYY)" value={data} style={styles.input} onChangeText={setData} placeholder="Ex: 00/00/0000" keyboardType="numeric"/>
+                <TextInput label="Data (DD/MM/YYYY)" value={data} style={styles.input} onChangeText={setData} placeholder="Ex: dia/mes/ano" keyboardType="numeric"/>
                 <TextInput label="Local" value={local} style={styles.input} onChangeText={setLocal}/>
-                <TextInput label="Inscrição" value={inscricao} style={styles.input} onChangeText={setInscricao}/>
+                    <Text style={{ marginBottom: 8 }}>Status da Inscrição</Text>
+                    <RadioButton.Group onValueChange={setInscricao} value={inscricao}>
+                        <RadioButton.Item label="Aberta" value="aberta" />
+                        <RadioButton.Item label="Encerrada" value="encerrada" />
+                    </RadioButton.Group>
                 <TextInput label="Descrição" value={descricao} style={styles.input} onChangeText={setDescricao}/>
+                <TextInput label="Total de Vagas" value={total_vagas} style={styles.input} onChangeText={(valor) => {
+                    setTotalVagas(valor);
+                    const num = parseInt(valor, 10);
+                    if (!isNaN(num)) {
+                        setVagasDisponiveis(num); // atualiza também as vagas disponíveis
+                    } else {
+                        setVagasDisponiveis('');
+                    }
+                }} 
+                    placeholder="Mínimo de vagas 10" keyboardType="numeric"/>
+
                 <Button style={styles.botao} mode="contained" onPress={cadastrar} loading={carregando} disabled={carregando}>
                     Cadastrar
                 </Button>

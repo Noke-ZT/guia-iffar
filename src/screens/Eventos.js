@@ -5,7 +5,8 @@ import { ScrollView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { supabase } from "./config/supabase";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 
 
 
@@ -13,7 +14,8 @@ export default function Eventos({navigation}) {
     const [eventos, setEventos] = useState([]);
     const [carregando, setCarregando] = useState(true);
 
-    useEffect(() =>{
+    useFocusEffect(
+        useCallback(() =>{
         async function buscarEventos(){
             const {data, error} = await supabase.from('eventos').select('*');
             if(error){
@@ -26,6 +28,7 @@ export default function Eventos({navigation}) {
         }
         buscarEventos();
     }, [])
+);
 
     return (
         
@@ -40,7 +43,7 @@ export default function Eventos({navigation}) {
                     </Button>
                     
                     {carregando && <ActivityIndicator animating/>}
-                    {!carregando && eventos.length == 0 && <Text> Não Tem Registro</Text>}
+                    {!carregando && eventos.length === 0 && <Text> Não Tem Registro</Text>}
 
                     {eventos.map((evento, index) => (
                         <EventoCard key={index} {...evento} 

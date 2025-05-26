@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { Badge, Card, Text, useTheme } from "react-native-paper";
 import { format } from 'date-fns';
 
-export default function EventoCard({titulo, data, local, inscricao, onPress}) {
+export default function EventoCard({titulo, data, local, inscricao, total_vagas, vagas_disponiveis, id, onPress}) {
     const theme = useTheme();
     
     const corBadge = inscricao === "aberta" ? theme.colors.primary : "tomato";
@@ -14,6 +14,7 @@ export default function EventoCard({titulo, data, local, inscricao, onPress}) {
                     <Text style={{color:corBadge}} variant="titleMedium">
                         {titulo}
                     </Text>
+            
                 <Badge style={[styles.badge, {backgroundColor:corBadge}]}>{textoBadge}</Badge>
                 </View>
                 
