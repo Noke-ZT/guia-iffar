@@ -16,6 +16,7 @@ export default function DetalheEvento({route, navigation}) {
         descricao,
         total_vagas,
         vagas_disponiveis,
+        foto_url,
         id
     } = route.params;
 
@@ -103,6 +104,11 @@ export default function DetalheEvento({route, navigation}) {
             <ScrollView style={styles.container}>
                 <Card mode="outlined" style={styles.card}>
                     <Card.Content>
+                        {foto_url && (
+                            <Card.Cover source={{ uri: foto_url }} 
+                            style={styles.img}
+                            />
+                        )}
                         <Text style={{color:corBadge}} variant="titleLarge">
                             {titulo}
                         </Text>
@@ -171,4 +177,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         fontSize: 12,
     },
+    img:{
+        width: 180,
+        height: 200,
+        marginBottom: 25,
+        alignSelf: 'center',
+        resizeMode: 'contain',
+        backgroundColor: '#F4F4F4',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#E0E0E0',
+        marginTop: 15,
+    }
 })
