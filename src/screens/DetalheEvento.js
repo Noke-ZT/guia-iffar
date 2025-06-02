@@ -34,6 +34,7 @@ export default function DetalheEvento({route, navigation}) {
             const verificarInscricao = async () => {
             if (perfil?.id && id) {
                 setCarregando(true);
+                
 
                 const { data, error } = await supabase
                 .from('inscricoes')
