@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet } from "react-native";
 import { Card, Divider, Text, Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function DetalheCurso({route}) {
     const {
@@ -10,8 +11,30 @@ export default function DetalheCurso({route}) {
         unidade,
         duracao,
         turno,
-        descricao
+        descricao,
+        arquivo_url
     } = route.params;
+
+useFocusEffect(
+        useCallback(() => {
+            const verificarCurso = async () => {
+                try {
+                    const { data, error } = await supabase
+                        .from('cursos')
+                        .select('*');
+                    
+                    if (error) {
+                        console.log("Erro ao buscar curso:", error.message);
+                        return;
+                    }
+                } catch (error) {
+                    console.log("Erro na requisição:", error);
+                }
+            };
+            
+            verificarCurso();
+        }) // Adiciona id como dependência
+    );
 
     return(
         <LinearGradient colors={['#DFF5EB', '#FFFFFF']} style={{flex: 1}}>
@@ -34,6 +57,9 @@ export default function DetalheCurso({route}) {
 
                         <Text variant="titleSmall"> Descrição </Text>
                         <Text variant="bodyMedium"> {descricao} </Text>
+                        <Text variant="bodyMedium" style={{ marginTop: 10 }}>
+                            {arquivo_url ? `PPC do Curso: ${arquivo_url}` : 'Nenhum PDF disponível para este curso.'}
+                        </Text>
 
                     </Card.Content>
                 </Card>

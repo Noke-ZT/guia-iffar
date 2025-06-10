@@ -16,18 +16,46 @@ export default function Eventos({navigation}) {
 
     useFocusEffect(
         useCallback(() =>{
-        async function buscarEventos(){
-            const {data, error} = await supabase.from('eventos').select('*');
-            if(error){
-                console.log(error);
+        async function buscarEventosComComentarios() {
+                try {
+                    // Buscar eventos
+                    const { data: eventosData, error: eventosError } = await supabase
+                        .from('eventos')
+                        .select('*');
+                    
+                    if (eventosError) {
+                        console.log('Erro ao buscar eventos:', eventosError);
+                        return;
+                    }
+
+                    // Buscar comentários para cada evento
+                    const eventosComComentarios = await Promise.all(
+                        eventosData.map(async (evento) => {
+                            // Contar comentários do evento
+                            const { count, error: comentariosError } = await supabase
+                                .from('comentarios_evento')
+                                .select('*', { count: 'exact', head: true })
+                                .eq('evento_id', evento.id);
+
+                            if (comentariosError) {
+                                console.log('Erro ao buscar comentários:', comentariosError);
+                                return { ...evento, numeroComentarios: 0 };
+                            }
+
+                            return { ...evento, numeroComentarios: count || 0 };
+                        })
+                    );
+
+                    setEventos(eventosComComentarios);
+                } catch (error) {
+                    console.log('Erro geral:', error);
+                } finally {
+                    setCarregando(false);
+                }
             }
-            else{
-                setEventos(data);
-            }
-            setCarregando(false);
-        }
-        buscarEventos();
-    }, [])
+
+            buscarEventosComComentarios();
+        }, [])
 );
 
     return (

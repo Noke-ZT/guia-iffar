@@ -36,6 +36,9 @@ export default function Cursos({navigation}) {
                     <Text style={styles.titulo}>
                         Cursos do IFFar
                     </Text>
+                    <Button style={styles.botao} mode="contained" onPress={() => navigation.navigate('CadastroCurso')}>
+                        Cadastrar Curso
+                    </Button>
 
                     {carregando && <ActivityIndicator animating/>}
                     {!carregando && cursos.length == 0 && <Text> Não Tem Registro</Text>}

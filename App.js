@@ -16,6 +16,7 @@ import Login from './src/screens/Login';
 import Cadastro from './src/screens/Cadastro';
 import { UsuarioProvider } from './src/screens/contexto/UsuarioContexto';
 import CadastroEvento from './src/screens/CadastroEvento';
+import CadastroCurso from './src/screens/CadastroCurso';
 
 
 //const Stack = createNativeStackNavigator();
@@ -89,6 +90,13 @@ export default function App() {
               }}
             />
             <Tab.Screen name="CadastroEvento" component={CadastroEvento}
+              options={{
+                tabBarButton: () => null,
+                tabBarStyle: { display: 'none' },
+                tabBarItemStyle: { display: 'none', width: 0, height: 0 },
+              }}
+            />
+            <Tab.Screen name="CadastroCurso" component={CadastroCurso}
               options={{
                 tabBarButton: () => null,
                 tabBarStyle: { display: 'none' },

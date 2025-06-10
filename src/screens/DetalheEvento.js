@@ -1,13 +1,22 @@
-import { ScrollView, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, Alert, View } from "react-native";
 import { Badge, Button, Card, Divider, Text, useTheme} from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { format } from "date-fns";
 import { useUsuario } from "./contexto/UsuarioContexto"; // Para verificar o perfil do usuário
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "./config/supabase";
-import { useFocusEffect } from "@react-navigation/native";
+import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import FotosEvento from "./componentes/FotosEvento";
+import ComentariosEvento from "./componentes/ComentariosEvento";
+import LikesEvento from "./componentes/LikesEvento";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 export default function DetalheEvento({route, navigation}) {
+    const Tab = createMaterialTopTabNavigator();
+
+
     const {
         titulo,
         data,
@@ -129,6 +138,33 @@ export default function DetalheEvento({route, navigation}) {
 
                         <Text variant="titleSmall"> Descrição </Text>
                         <Text variant="bodyMedium"> {descricao} </Text>
+
+                        <View style={{ height: 400 }}>
+                            <Tab.Navigator>
+                                <Tab.Screen name="Comentarios" component={ComentariosEvento} initialParams={{ eventoId: id }}
+                                    options={{
+                                        tabBarIcon: ({color, size}) => (
+                                        <MaterialCommunityIcons name="chat-outline" size={size} color={color}/>
+                                        )
+                                    }}
+                                />
+                                <Tab.Screen name="Likes" component={LikesEvento} initialParams={{ eventoId: id }}
+                                    options={{
+                                        tabBarIcon: ({color, size}) => (
+                                        <MaterialCommunityIcons name="cards-heart-outline" size={size} color={color}/>
+                                        )
+                                    }}
+                                />
+                                <Tab.Screen name="Fotos" component={FotosEvento} initialParams={{ eventoId: id, foto_url: foto_url }}
+                                    options={{
+                                        tabBarIcon: ({color, size}) => (
+                                        <MaterialCommunityIcons name="panorama-outline" size={size} color={color}/>
+                                        )
+                                    }}
+                                />
+                            </Tab.Navigator>
+                        </View>
+                        
 
                     </Card.Content>
                 </Card>
