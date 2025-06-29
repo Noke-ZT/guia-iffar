@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, TouchableOpacity, Alert, View } from "react-nat
 import { Badge, Button, Card, Divider, Text, useTheme} from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { format } from "date-fns";
-import { useUsuario } from "./contexto/UsuarioContexto"; // Para verificar o perfil do usuário
+import { useUsuario } from "./contexto/UsuarioContexto";
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "./config/supabase";
 import { NavigationContainer, useFocusEffect } from "@react-navigation/native";
@@ -15,8 +15,6 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 export default function DetalheEvento({route, navigation}) {
     const Tab = createMaterialTopTabNavigator();
-
-
     const {
         titulo,
         data,
@@ -35,30 +33,41 @@ export default function DetalheEvento({route, navigation}) {
 
     const theme = useTheme();
         
-        const corBadge = inscricao === "aberta" ? theme.colors.primary : "tomato";
-        const textoBadge = inscricao === "aberta" ? "Incrições abertas" : "Encerradas";
+    const corBadge = inscricao === "aberta" ? theme.colors.primary : "tomato";
+    const textoBadge = inscricao === "aberta" ? "Incrições abertas" : "Encerradas";
+
+    // SOLUÇÃO: Criar componentes wrapper que recebem o eventoId como prop
+    const ComentariosWrapper = useCallback((props) => {
+        return <ComentariosEvento {...props} route={{params: {eventoId: id}}} />;
+    }, [id]);
+
+    const LikesWrapper = useCallback((props) => {
+        return <LikesEvento {...props} route={{params: {eventoId: id}}} />;
+    }, [id]);
+
+    const FotosWrapper = useCallback((props) => {
+        return <FotosEvento {...props} route={{params: {eventoId: id, foto_url: foto_url}}} />;
+    }, [id, foto_url]);
 
     useFocusEffect(
         useCallback(() => {
             const verificarInscricao = async () => {
-            if (perfil?.id && id) {
-                setCarregando(true);
-                
+                if (perfil?.id && id) {
+                    setCarregando(true);
+                    
+                    const { data, error } = await supabase
+                    .from('inscricoes')
+                    .select('*')
+                    .eq('usuario_id', perfil.id)
+                    .eq('evento_id', id);
 
-                const { data, error } = await supabase
-                .from('inscricoes')
-                .select('*')
-                .eq('usuario_id', perfil.id)
-                .eq('evento_id', id);
-
-                if (error) {
-                console.log("Erro ao verificar inscrição:", error.message);
-                }
-                setIsInscrito(data?.length > 0); // Atualiza o estado de inscrição
-
-                setCarregando(false); // Fim do carregamento
+                    if (error) {
+                        console.log("Erro ao verificar inscrição:", error.message);
+                    }
+                    setIsInscrito(data?.length > 0);
+                    setCarregando(false);
                 } else {
-                    setCarregando(false); // Caso o usuário não tenha perfil
+                    setCarregando(false);
                 }
             };
 
@@ -66,16 +75,15 @@ export default function DetalheEvento({route, navigation}) {
         }, [perfil?.id, id])
     );
 
-
     const handleInscricao = async () => {
         if (!perfil?.id) {
             Alert.alert('Erro', 'Você precisa estar logado para se inscrever');
             return;
         }
         const inscricao = {
-        usuario_id: perfil.id,       // deve bater com o nome da coluna no Supabase
-        evento_id: id,        // id do evento vindo da route
-        data: new Date().toISOString() // ISO format (ex: '2025-05-12T15:00:00Z')
+            usuario_id: perfil.id,
+            evento_id: id,
+            data: new Date().toISOString()
         };
 
         const { error } = await supabase
@@ -89,6 +97,7 @@ export default function DetalheEvento({route, navigation}) {
             Alert.alert('Sucesso', 'Você se inscreveu com sucesso no evento!');
         }
     };
+
     const handleCancelamento = async () => {
         if (!perfil?.id) {
             Alert.alert('Erro', 'Você precisa estar logado para cancelar a inscrição');
@@ -125,14 +134,12 @@ export default function DetalheEvento({route, navigation}) {
                         <Badge style={[styles.badge, { backgroundColor: corBadge }]}>
                             {textoBadge}
                         </Badge>
-        
 
                         <Divider style={styles.divisor}/>
                         <Badge style={{backgroundColor: 'blue'}}>Total de Vagas:{total_vagas} / Vagas restantes:{vagas_disponiveis}</Badge>
 
                         <Text variant="bodyMedium"> 🗓️Data: {format(data, "dd/MM/yyyy")} </Text>
                         <Text variant="bodyMedium"> 📍Local: {local} </Text>
-                        
 
                         <Divider style={styles.divisor}/>
 
@@ -140,34 +147,40 @@ export default function DetalheEvento({route, navigation}) {
                         <Text variant="bodyMedium"> {descricao} </Text>
 
                         <View style={{ height: 400 }}>
-                            <Tab.Navigator>
-                                <Tab.Screen name="Comentarios" component={ComentariosEvento} initialParams={{ eventoId: id }}
+                            {/* Usar key única baseada no ID do evento para forçar remount */}
+                            <Tab.Navigator key={`evento-tabs-${id}`}>
+                                <Tab.Screen 
+                                    name="Comentarios" 
+                                    component={ComentariosWrapper}
                                     options={{
                                         tabBarIcon: ({color, size}) => (
-                                        <MaterialCommunityIcons name="chat-outline" size={size} color={color}/>
+                                            <MaterialCommunityIcons name="chat-outline" size={size} color={color}/>
                                         )
                                     }}
                                 />
-                                <Tab.Screen name="Likes" component={LikesEvento} initialParams={{ eventoId: id }}
+                                <Tab.Screen 
+                                    name="Likes" 
+                                    component={LikesWrapper}
                                     options={{
                                         tabBarIcon: ({color, size}) => (
-                                        <MaterialCommunityIcons name="cards-heart-outline" size={size} color={color}/>
+                                            <MaterialCommunityIcons name="cards-heart-outline" size={size} color={color}/>
                                         )
                                     }}
                                 />
-                                <Tab.Screen name="Fotos" component={FotosEvento} initialParams={{ eventoId: id, foto_url: foto_url }}
+                                <Tab.Screen 
+                                    name="Fotos" 
+                                    component={FotosWrapper}
                                     options={{
                                         tabBarIcon: ({color, size}) => (
-                                        <MaterialCommunityIcons name="panorama-outline" size={size} color={color}/>
+                                            <MaterialCommunityIcons name="panorama-outline" size={size} color={color}/>
                                         )
                                     }}
                                 />
                             </Tab.Navigator>
                         </View>
-                        
-
                     </Card.Content>
                 </Card>
+                
                 {!carregando && vagas_disponiveis > 0 && perfil?.tipo === 'aluno' && (
                     isInscrito ? (
                         <Button mode="contained" style={{color: 'tomato'}} onPress={handleCancelamento}>
@@ -177,7 +190,7 @@ export default function DetalheEvento({route, navigation}) {
                         <Button mode="contained" onPress={handleInscricao}>
                             Clique para se inscrever
                         </Button>
-                            )
+                    )
                 )}
                 {!carregando && vagas_disponiveis === 0 && perfil?.tipo === 'aluno' && (
                     isInscrito ? (

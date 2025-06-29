@@ -5,6 +5,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function EventoCard({titulo, data, local, inscricao, total_vagas, vagas_disponiveis, id, foto_url, numeroComentarios, onPress}) {
     const theme = useTheme();
+
+    const numeroLikes = Math.floor(Math.random() * 101);
+    const numeroFotos = foto_url ? 1 : 0;
     
     const corBadge = inscricao === "aberta" ? theme.colors.primary : "tomato";
     const textoBadge = inscricao === "aberta" ? "Incrições abertas" : "Encerradas";
@@ -41,8 +44,18 @@ export default function EventoCard({titulo, data, local, inscricao, total_vagas,
                                     <Text style={{ marginLeft: 4 }}>{numeroComentarios}</Text>
                                 </View>
                             </View>
-                            <MaterialCommunityIcons style={styles.icone} name="cards-heart-outline" size={25} color='#00FF00'></MaterialCommunityIcons>
-                            <MaterialCommunityIcons style={styles.icone} name="panorama-outline" size={25} color='#00FF00'></MaterialCommunityIcons>
+                            <View style={styles.iconeContainer}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
+                                    <MaterialCommunityIcons style={styles.icone} name="cards-heart-outline" size={25} color='#00FF00'></MaterialCommunityIcons>
+                                    <Text style={{ marginLeft: -5 }}>{numeroLikes}</Text>
+                                </View>
+                            </View>
+                            <View style={styles.iconeContainer}>
+                                <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
+                                    <MaterialCommunityIcons style={styles.icone} name="panorama-outline" size={25} color='#00FF00'></MaterialCommunityIcons>
+                                    <Text style={{ marginLeft: -5 }}>{numeroFotos}</Text>
+                                </View>
+                            </View>
                         </View>
                     </View>
                 </View>
