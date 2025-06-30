@@ -26,7 +26,7 @@ export default function CursoCard({nome, duracao, modalidade, turno, arquivo_url
                         <MaterialCommunityIcons name="file-pdf-box" size={16} color="black" />
                         PDF do Curso: {arquivo_url}
                     </Text>
-                )}s
+                )}
             </Card.Content>
         </Card>
     );

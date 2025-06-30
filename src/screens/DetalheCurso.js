@@ -2,8 +2,9 @@ import { ScrollView, StyleSheet } from "react-native";
 import { Card, Divider, Text, Button } from "react-native-paper";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
-export default function DetalheCurso({route}) {
+export default function DetalheCurso({route, navigation}) {
     const {
         nome,
         modalidade,
@@ -63,7 +64,7 @@ useFocusEffect(
 
                     </Card.Content>
                 </Card>
-                <Button mode="outlined" onPress={() => navigation.navigate('/')}>
+                <Button mode="outlined" onPress={() => navigation.navigate('Cursos')}>
                     Voltar
                 </Button>
             </ScrollView>

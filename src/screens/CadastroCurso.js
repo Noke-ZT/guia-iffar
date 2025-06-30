@@ -5,6 +5,7 @@ import { supabase } from "./config/supabase";
 import { useUsuario } from "./contexto/UsuarioContexto";
 import { useNavigation } from '@react-navigation/native';
 import * as DocumentPicker from 'expo-document-picker';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function CadastroCurso() {
   const { perfil } = useUsuario();
@@ -108,6 +109,7 @@ export default function CadastroCurso() {
   }
 
   return (
+    <LinearGradient colors={['#DFF5EB', '#FFFFFF']} style={{flex: 1}}>
     <ScrollView contentContainerStyle={styles.container}>
       <Text variant="titleLarge" style={styles.titulo}>Novo Curso</Text>
 
@@ -135,6 +137,7 @@ export default function CadastroCurso() {
         Cancelar
       </Button>
     </ScrollView>
+    </LinearGradient>
   );
 }
 
