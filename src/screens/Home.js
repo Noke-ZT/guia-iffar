@@ -2,9 +2,23 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { useUsuario } from "./contexto/UsuarioContexto";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 export default function Home({navigation}) {
-    const {usuario, perfil, logout} = useUsuario();
+    const {usuario, perfil, logout, recarregarDados} = useUsuario();
+
+    // Recarrega dados sempre que a tela ganha foco para atualizar foto e nome
+    useFocusEffect(
+        useCallback(() => {
+            if (usuario) {
+                const refresh = async () => {
+                    await recarregarDados();
+                };
+                refresh();
+            }
+        }, [usuario, recarregarDados])
+    );
 
     const sair = async ()=> {
         await logout();
@@ -18,7 +32,20 @@ export default function Home({navigation}) {
                     <Text style={styles.nick} >
                         Olá, {perfil?.nome || "Visitante"}
                     </Text>
-                    <Image style={styles.imagem} source={require('../../assets/IFFar.png')}/>
+                    
+                    {/* Mostra foto do perfil se existir e usuário logado, senão mostra logo */}
+                    {usuario && perfil?.foto_url ? (
+                        <Image 
+                            style={styles.imagem} 
+                            source={{ uri: perfil.foto_url }}
+                            resizeMode="cover"
+                        />
+                    ) : (
+                        <Image 
+                            style={styles.imagem} 
+                            source={require('../../assets/IFFar.png')}
+                        />
+                    )}
                     <Text style={styles.titulo}>
                         Guia Acadêmico IFFar Panambi
                     </Text>
@@ -38,6 +65,12 @@ export default function Home({navigation}) {
                         onPress={() => navigation.navigate('Cadastro')}>
                         Cadastro
                     </Button>
+                    {usuario &&(
+                        <Button style={styles.botao} mode="contained"
+                        onPress={() => navigation.navigate('HistoricoEventos')}>
+                        Histórico
+                        </Button>
+                    )}
                     <Button style={styles.botao} mode="outlined"
                         onPress={() => navigation.navigate('Sobre')}>
                         Sobre o app

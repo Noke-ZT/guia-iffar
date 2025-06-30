@@ -19,6 +19,7 @@ import CadastroEvento from './src/screens/CadastroEvento';
 import CadastroCurso from './src/screens/CadastroCurso';
 import Perfil from './src/screens/usuario/Perfil';
 import AleterarPerfil from './src/screens/usuario/AlterarPerfil';
+import HistoricoEventos from './src/screens/componentes/HistoricoEventos';
 
 const Tab = createBottomTabNavigator();
 
@@ -123,6 +124,13 @@ function NavigationApp() {
             tabBarStyle: { display: 'none' },
             tabBarItemStyle: { display: 'none', width: 0, height: 0 },
           }}
+        />
+        <Tab.Screen name="HistoricoEventos" component={HistoricoEventos}
+          options={{
+            tabBarButton: () => null,
+            tabBarStyle: { display: 'none' },
+            tabBarItemStyle: { display: 'none', width: 0, height: 0 },
+          }} 
         />
       </Tab.Navigator>
     </NavigationContainer>

@@ -80,22 +80,32 @@ export default function DetalheEvento({route, navigation}) {
             Alert.alert('Erro', 'Você precisa estar logado para se inscrever');
             return;
         }
+
         const inscricao = {
             usuario_id: perfil.id,
             evento_id: id,
             data: new Date().toISOString()
         };
 
-        const { error } = await supabase
-        .from('inscricoes')
-        .insert([inscricao]);
+        const { error: erroInscricao } = await supabase
+            .from('inscricoes')
+            .insert([inscricao]);
 
-        if (error) {
-            Alert.alert('Erro ao se inscrever', error.message);
-        } else {
-            setIsInscrito(true);
-            Alert.alert('Sucesso', 'Você se inscreveu com sucesso no evento!');
+        if (erroInscricao) {
+            Alert.alert('Erro ao se inscrever', erroInscricao.message);
+            return;
         }
+
+        const { error: erroHistorico } = await supabase
+            .from('historico')
+            .insert([{ ...inscricao, situacao: true }]); // true para inscrito
+
+        if (erroHistorico) {
+            console.log("Erro ao registrar no histórico:", erroHistorico.message);
+        }
+
+        setIsInscrito(true);
+        Alert.alert('Sucesso', 'Você se inscreveu com sucesso no evento!');
     };
 
     const handleCancelamento = async () => {
@@ -104,18 +114,34 @@ export default function DetalheEvento({route, navigation}) {
             return;
         }
 
-        const { error } = await supabase
+        const { error: erroDelete } = await supabase
             .from('inscricoes')
             .delete()
             .eq('usuario_id', perfil.id)
             .eq('evento_id', id);
 
-        if (error) {
-            Alert.alert('Erro ao cancelar inscrição', error.message);
-        } else {
-            setIsInscrito(false);
-            Alert.alert('Sucesso', 'Sua inscrição foi cancelada!');
+        if (erroDelete) {
+            Alert.alert('Erro ao cancelar inscrição', erroDelete.message);
+            return;
         }
+
+        const cancelamento = {
+            usuario_id: perfil.id,
+            evento_id: id,
+            data: new Date().toISOString(),
+            situacao: false // false para cancelado
+        };
+
+        const { error: erroHistorico } = await supabase
+            .from('historico')
+            .insert([cancelamento]);
+
+        if (erroHistorico) {
+            console.log("Erro ao registrar cancelamento no histórico:", erroHistorico.message);
+        }
+
+        setIsInscrito(false);
+        Alert.alert('Sucesso', 'Sua inscrição foi cancelada!');
     };
 
     return(

@@ -19,17 +19,17 @@ export const UsuarioProvider = ({children}) => {
                 setUser(userData.user);
             }
 
-            // Se você tem dados na tabela usuarios, recarregue aqui também
-            // Exemplo (ajuste conforme sua estrutura):
+            
+        
             if (userData?.user?.id) {
                 const { data: usuarioData, error: usuarioError } = await supabase
                     .from('usuarios')
                     .select('*')
-                    .eq('id', userData.user.id) // ou o campo que você usa
+                    .eq('id', userData.user.id) 
                     .single();
                 
                 if (usuarioData && !usuarioError) {
-                    setPerfil(usuarioData); // ou setUsuario, conforme você usa
+                    setPerfil(usuarioData); 
                 }
             }
         } catch (error) {
