@@ -42,7 +42,7 @@ function NavigationApp() {
           }}
         />
         
-        {perfil?.tipo === 'aluno' &&(
+        {(perfil?.tipo === 'admin' || perfil?.tipo === 'aluno') &&(
           <Tab.Screen 
             name="Perfil" 
             component={Perfil}

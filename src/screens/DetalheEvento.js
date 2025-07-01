@@ -207,7 +207,7 @@ export default function DetalheEvento({route, navigation}) {
                     </Card.Content>
                 </Card>
                 
-                {!carregando && vagas_disponiveis > 0 && perfil?.tipo === 'aluno' && (
+                {!carregando && vagas_disponiveis > 0 && perfil?.tipo === 'admin' && (
                     isInscrito ? (
                         <Button mode="contained" style={{color: 'tomato'}} onPress={handleCancelamento}>
                             Cancelar Inscrição
@@ -218,7 +218,7 @@ export default function DetalheEvento({route, navigation}) {
                         </Button>
                     )
                 )}
-                {!carregando && vagas_disponiveis === 0 && perfil?.tipo === 'aluno' && (
+                {!carregando && vagas_disponiveis === 0 && perfil?.tipo === 'admin' && (
                     isInscrito ? (
                         <Button mode="contained" style={{color: 'tomato'}} onPress={handleCancelamento}>
                             Cancelar Inscrição

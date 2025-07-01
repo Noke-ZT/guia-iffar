@@ -99,7 +99,7 @@ export default function CadastroCurso() {
   };
   
 
-  if (perfil?.tipo !== 'aluno') {
+  if (perfil?.tipo !== 'admin') {
     return (
       <View style={styles.bloqueado}>
         <Text variant="titleLarge">⛔ Acesso restrito</Text>

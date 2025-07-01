@@ -25,7 +25,7 @@ export default function CadastroEvento() {
     const [carregandoFoto, setCarregandoFoto] = useState(false);
     
 
-    const { perfil } = useUsuario();
+    const { perfil, user } = useUsuario();
 
     const navigation = useNavigation();
 
@@ -113,16 +113,14 @@ export default function CadastroEvento() {
             ]);
     };
 
-    const cadastrar = async () => {
+   const cadastrar = async () => {
+    if (!user || !perfil || perfil?.tipo !== 'admin') {
+        Alert.alert('Permissão negada', 'Você precisa estar logado como administrador para cadastrar eventos!');
+        return;
+    }
         if (!titulo || !data || !local || !inscricao || !descricao || !total_vagas) {
             Alert.alert('Preencha todos os campos!');
             alert('Preencha todos os campos!');
-            return;
-        }
-
-        if (perfil?.tipo !== 'aluno') {
-            Alert.alert('Permissão negada', 'Apenas professores podem cadastrar eventos!');
-            alert('Apenas professores podem cadastrar eventos!');
             return;
         }
 
@@ -173,6 +171,25 @@ export default function CadastroEvento() {
                 alert(`Falha ao cadastrar evento: ${error.message}`);
                 setCarregando(false);
                 return;
+            }
+
+             // Enviar email de confirmação
+            try {
+                await fetch('https://nqzrbtkpgzsvfgphejcc.supabase.co/functions/v1/super-function', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        from: 'no-reply@simed-ppi.site',
+                        to: user?.email,
+                        subject: 'Confirmação de Evento Cadastrado',
+                        html: `<p>Olá ${perfil?.nome ?? 'usuário'},<br/>Evento cadastrado com sucesso.</p>`
+                    })
+                });
+            } catch (emailError) {
+                console.error('Erro ao enviar email:', emailError);
+                // Não interrompe o fluxo se o email falhar
             }
         
                 
